@@ -1,1 +1,1 @@
-export { FileTree } from './file-tree';
+export { FileTreeGenerator } from './file-tree';

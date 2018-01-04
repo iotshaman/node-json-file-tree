@@ -1,5 +1,6 @@
 declare module 'file-tree-api' {
-    export interface FileTreeApi {
-        temp(path: string): void;
+    export interface FileTreeGeneratorConfig {
+        windows?: boolean;
+        normalize?: (path: string) => string;
     }
 }

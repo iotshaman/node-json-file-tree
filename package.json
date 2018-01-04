@@ -1,6 +1,6 @@
 {
   "name": "node-json-file-tree",
-  "version": "0.0.1",
+  "version": "0.0.8",
   "description": "Node Js module to generate a tree structure representation of a folder structure / file system.",
   "main": "dist/index.js",
   "repository": {
@@ -9,9 +9,9 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "karma start",
-    "test-travis": "./node_modules/.bin/karma start karma.travis.conf.js",
-    "test-html": "./node_modules/.bin/karma start karma.html.conf.js"
+    "test": "karma start --single-run",
+    "test-watch": "karma start",
+    "test-travis": "./node_modules/.bin/karma start karma.travis.conf.js --single-run"
   },
   "author": "Kyle Brown",
   "license": "MIT",
@@ -27,11 +27,11 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-spec-reporter": "0.0.32",
     "karma-typescript": "^3.0.9",
-    "typescript": "^2.6.1"
+    "node-dir": "^0.1.16",
+    "typescript": "^2.6.1",
+    "upath": "^1.0.2"
   },
   "dependencies": {
-    "node-dir": "^0.1.16",
-    "path": "^0.12.7",
-    "underscore": "^1.8.3"
+    "promise": "8.0.1"
   }
 }
