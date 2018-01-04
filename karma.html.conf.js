@@ -9,7 +9,7 @@ module.exports = function(config) {
         preprocessors: {
             "**/*.ts": "karma-typescript"
         },
-        reporters: ["spec"],
+        reporters: ["spec", "coverage"],
         browsers: ["PhantomJS"],
         singleRun: true,
         autoWatch: false

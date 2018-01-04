@@ -9,8 +9,9 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "./node_modules/.bin/karma start",
-    "test-chrome": "karma start"
+    "test": "karma start",
+    "test-travis": "./node_modules/.bin/karma start karma.travis.conf.js",
+    "test-html": "./node_modules/.bin/karma start karma.html.conf.js"
   },
   "author": "Kyle Brown",
   "license": "MIT",

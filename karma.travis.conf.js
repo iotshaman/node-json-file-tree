@@ -9,8 +9,12 @@ module.exports = function(config) {
         preprocessors: {
             "**/*.ts": "karma-typescript"
         },
-        reporters: ["spec"],
+        reporters: ["spec", "coverage", "coveralls"],
         browsers: ["PhantomJS"],
+        coverageReporter: {
+            type: 'lcov', 
+            dir: 'coverage/'
+        },
         singleRun: true,
         autoWatch: false
     });
