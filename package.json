@@ -1,6 +1,6 @@
 {
   "name": "node-json-file-tree",
-  "version": "0.0.8",
+  "version": "1.0.0",
   "description": "Node Js module to generate a tree structure representation of a folder structure / file system.",
   "main": "dist/index.js",
   "repository": {
