@@ -1,0 +1,12 @@
+# Custom Ignores #
+##################
+node_modules
+node_modules/*
+.vscode
+.vscode/*
+node-json-file-tree-*.tgz
+dist/**/*.spec.js 
+dist/**/*.spec.js.map
+.coveralls.yml
+coverage/
+coverage/*

@@ -1,0 +1,36 @@
+{
+  "name": "node-json-file-tree",
+  "version": "0.0.1",
+  "description": "Node Js module to generate a tree structure representation of a folder structure / file system.",
+  "main": "dist/index.js",
+  "repository": {
+    "url": "https://github.com/iotshaman/node-json-file-tree"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "./node_modules/.bin/karma start",
+    "test-chrome": "karma start"
+  },
+  "author": "Kyle Brown",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jasmine": "^2.8.2",
+    "@types/node": "^8.0.53",
+    "jasmine": "^2.8.0",
+    "jasmine-core": "^2.8.0",
+    "karma": "1.5.0",
+    "karma-coverage": "^1.1.1",
+    "karma-coveralls": "^1.1.2",
+    "karma-jasmine": "^1.1.1",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-spec-reporter": "0.0.32",
+    "karma-typescript": "^3.0.9",
+    "typescript": "^2.6.1"
+  },
+  "dependencies": {
+    "node-dir": "^0.1.16",
+    "path": "^0.12.7",
+    "underscore": "^1.8.3"
+  }
+}
