@@ -1,27 +1,11 @@
-import { FileTreeGenerator } from './file-tree';
+import { FileTreeFactory } from './file-tree';
 import { FileTreeGeneratorConfig } from 'file-tree-api';
 import * as upath from 'upath';
-
-describe('File Tree - Ensure Path Format', () => {
-    it('Test Invalid Origin String', () => {
-        let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTree: FileTreeGenerator = new FileTreeGenerator({}, fs);
-        var rslt = fileTree.ensurePathFormat('/test/folder/path');
-        expect(rslt).toBe('/test/folder/path/');
-    });
-
-    it('Test Valid Origin String', () => {
-        let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTree: FileTreeGenerator = new FileTreeGenerator({}, fs);
-        var rslt = fileTree.ensurePathFormat('/test/folder/path/');
-        expect(rslt).toBe('/test/folder/path/');
-    });
-});
 
 describe('File Tree - Directory Retrieval', () => {
     it('Test Exception Handling', (done: any) => {
         let fs: SampleFileSystemWithErrors = new SampleFileSystemWithErrors();
-        let fileTree: FileTreeGenerator = new FileTreeGenerator({}, fs);
+        let fileTree: FileTreeFactory = new FileTreeFactory({}, fs);
         fileTree.getAllDirectories('').then((rslt: any) => {
             done('Promise should not be resolved')
         }).catch((ex: any) => {
@@ -31,7 +15,7 @@ describe('File Tree - Directory Retrieval', () => {
 
     it('Test Valid Retrieval', (done: any) => {
         let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTree: FileTreeGenerator = new FileTreeGenerator({}, fs);
+        let fileTree: FileTreeFactory = new FileTreeFactory({}, fs);
         fileTree.getAllDirectories('').then((rslt: any) => {
             expect(rslt).not.toBe(null);
             done();
@@ -44,7 +28,7 @@ describe('File Tree - Directory Retrieval', () => {
             normalize: upath.normalize,
             windows: true
         }
-        let fileTree: FileTreeGenerator = new FileTreeGenerator(config, fs);
+        let fileTree: FileTreeFactory = new FileTreeFactory(config, fs);
         fileTree.getAllDirectories('').then((rslt: any) => {
             expect(rslt).not.toBe(null);
             expect(rslt[0]).toBe('/test/folder/path');
@@ -56,7 +40,7 @@ describe('File Tree - Directory Retrieval', () => {
 describe('File Tree - File Retrieval', () => {
     it('Test Exception Handling', (done: any) => {
         let fs: SampleFileSystemWithErrors = new SampleFileSystemWithErrors();
-        let fileTree: FileTreeGenerator = new FileTreeGenerator({}, fs);
+        let fileTree: FileTreeFactory = new FileTreeFactory({}, fs);
         fileTree.getAllFiles('').then((rslt: any) => {
             done('Promise should not be resolved')
         }).catch((ex: any) => {
@@ -66,7 +50,7 @@ describe('File Tree - File Retrieval', () => {
 
     it('Test Valid Retrieval', (done: any) => {
         let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTree: FileTreeGenerator = new FileTreeGenerator({}, fs);
+        let fileTree: FileTreeFactory = new FileTreeFactory({}, fs);
         fileTree.getAllFiles('').then((rslt: any) => {
             expect(rslt).not.toBe(null);
             done();
@@ -79,7 +63,7 @@ describe('File Tree - File Retrieval', () => {
             normalize: upath.normalize,
             windows: true
         }
-        let fileTree: FileTreeGenerator = new FileTreeGenerator(config, fs);
+        let fileTree: FileTreeFactory = new FileTreeFactory(config, fs);
         fileTree.getAllFiles('').then((rslt: any) => {
             expect(rslt).not.toBe(null);
             expect(rslt[0]).toBe('/test/file/path/sample1.txt');
@@ -88,50 +72,32 @@ describe('File Tree - File Retrieval', () => {
     });
 });
 
-describe('File Tree - Reduce Path Method', () => {
-    it('Test Path Reduction', () => {
-        let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTree: FileTreeGenerator = new FileTreeGenerator({}, fs);
-        var test = fileTree.reduce_path('test', 'path');
-        expect(test).toBe('test/path');
-    })
-});
-
-describe('File Tree - Generate Directory', () => {
-    it('Test Directory Generation', () => {
-        let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTree: FileTreeGenerator = new FileTreeGenerator({}, fs);
-        var rslt = fileTree.generateDirectory(['/test/path', '/another/test']);
-        expect(rslt).not.toBe(null);
-
-        expect(rslt['test']).not.toBe(null);
-        expect(rslt['test']['_files_']).not.toBe(null);
-        expect(rslt['test']['path']).not.toBe(null);
-        expect(rslt['test']['path']['_files_']).not.toBe(null);
-        
-        expect(rslt['another']).not.toBe(null);
-        expect(rslt['another']['_files_']).not.toBe(null);
-        expect(rslt['another']['test']).not.toBe(null);
-        expect(rslt['another']['test']['_files_']).not.toBe(null);
-    })
-});
-
-describe('File Tree - Map Relative Names', () => {
-    it('Test mapRelativeNames Method', () => {
-        let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTree: FileTreeGenerator = new FileTreeGenerator({}, fs);
-        var arr = ['/test/file/or/folder/path/sample.txt'];
-        var rslt = fileTree.mapRelativeNames(arr, '/test/file/or/folder/path/');
-        expect(rslt).not.toBe(null);
-        expect(rslt[0]).toBe('path/sample.txt');
-    })
-});
-
 describe('File Tree - Get Tree Object', () => {
     it('Test Valid Retrieval', (done: any) => {
         let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTree: FileTreeGenerator = new FileTreeGenerator({}, fs);
-        fileTree.getTreeData('/test/file/or/folder/path/').then((rslt) => {
+        let fileTree: FileTreeFactory = new FileTreeFactory({}, fs);
+        fileTree.getFileTree('/test/file/or/folder/path/').then((rslt) => {
+            done();
+        }).catch(() => {
+            done('Exception should not be raised.');
+        })
+    });
+
+    it('Test Valid Retrieval - Windows machine with default normalization', (done: any) => {
+        let fs: SampleFileSystem = new SampleFileSystem();
+        let fileTree: FileTreeFactory = new FileTreeFactory({ windows: true }, fs);
+        fileTree.getFileTree('/test/file/or/folder/path/').then((rslt) => {
+            done();
+        }).catch(() => {
+            done('Exception should not be raised.');
+        })
+    });
+
+    it('Test Valid Retrieval - Windows machine with custom normalization', (done: any) => {
+        let fs: SampleFileSystem = new SampleFileSystem();
+        let config: any = { windows: true, normalize: (path: string) => { return path; } }
+        let fileTree: FileTreeFactory = new FileTreeFactory(config, fs);
+        fileTree.getFileTree('/test/file/or/folder/path/').then((rslt) => {
             done();
         }).catch(() => {
             done('Exception should not be raised.');
@@ -140,8 +106,8 @@ describe('File Tree - Get Tree Object', () => {
 
     it('Test Invalid Folder Retrieval', (done: any) => {
         let fs: SampleFileSystemWithFolderErrors = new SampleFileSystemWithFolderErrors();
-        let fileTree: FileTreeGenerator = new FileTreeGenerator({}, fs);
-        fileTree.getTreeData('/test/file/or/folder/path/').then((rslt) => {
+        let fileTree: FileTreeFactory = new FileTreeFactory({}, fs);
+        fileTree.getFileTree('/test/file/or/folder/path/').then((rslt) => {
             done('Exception should be raised.');
         }).catch(() => {
             done();
@@ -150,8 +116,8 @@ describe('File Tree - Get Tree Object', () => {
 
     it('Test Invalid File Retrieval', (done: any) => {
         let fs: SampleFileSystemWithFileErrors = new SampleFileSystemWithFileErrors();
-        let fileTree: FileTreeGenerator = new FileTreeGenerator({}, fs);
-        fileTree.getTreeData('/test/file/or/folder/path/').then((rslt) => {
+        let fileTree: FileTreeFactory = new FileTreeFactory({}, fs);
+        fileTree.getFileTree('/test/file/or/folder/path/').then((rslt) => {
             done('Exception should be raised.');
         }).catch(() => {
             done();
