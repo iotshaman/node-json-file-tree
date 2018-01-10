@@ -3,9 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var FileSystemUtils = /** @class */ (function () {
     function FileSystemUtils(windows, normalize) {
         if (windows === void 0) { windows = false; }
-        if (normalize === void 0) { normalize = defaultNormalization; }
+        if (normalize === void 0) { normalize = null; }
         this.windows = windows;
         this.normalize = normalize;
+        if (this.normalize == null) {
+            this.normalize = this.defaultNormalization;
+        }
     }
     FileSystemUtils.prototype.ensurePathFormat = function (path) {
         var chr = path.substring(path.length - 1);
@@ -69,6 +72,9 @@ var FileSystemUtils = /** @class */ (function () {
     FileSystemUtils.prototype.create_path = function (path, current_dir) {
         var parts = this.getFileParts(path);
         if (parts.length == 1) {
+            if (!current_dir['_files_']) {
+                current_dir['_files_'] = [];
+            }
             current_dir['_files_'].push(parts[0]);
         }
         else {
@@ -81,11 +87,11 @@ var FileSystemUtils = /** @class */ (function () {
     //turns an array of folder parts into path
     FileSystemUtils.prototype.reduce_path = function (a, b) { return a + '/' + b; };
     ;
+    FileSystemUtils.prototype.defaultNormalization = function (path) {
+        console.warn('No path normalization method provided, this may cause issues on certain platforms.');
+        return path;
+    };
     return FileSystemUtils;
 }());
 exports.FileSystemUtils = FileSystemUtils;
-function defaultNormalization(path) {
-    console.warn('No path normalization method provided, this may cause issues on certain platforms.');
-    return path;
-}
 //# sourceMappingURL=file-system-utils.js.map

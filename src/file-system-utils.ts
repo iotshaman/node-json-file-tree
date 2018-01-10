@@ -70,6 +70,7 @@ export class FileSystemUtils {
     create_path(path, current_dir) {
         var parts = this.getFileParts(path);
         if (parts.length == 1) {
+			if (!current_dir['_files_']) { current_dir['_files_'] = []; }
             current_dir['_files_'].push(parts[0]);
         } else {
             var next = parts[0];

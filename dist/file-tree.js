@@ -29,7 +29,12 @@ var FileTreeFactory = /** @class */ (function () {
         var path_predicate = this.utils.ensurePathFormat(start);
         var start_path = this.utils.ensurePathFormat(start);
         if (this.config.windows) {
-            path_predicate = this.config.normalize(path_predicate.substring(2));
+            if (this.config.normalize) {
+                path_predicate = this.config.normalize(path_predicate.substring(2));
+            }
+            else {
+                path_predicate = this.utils.defaultNormalization(path_predicate.substring(2));
+            }
         }
         promises.push(this.getAllDirectories(start_path)
             .then(function (rslt) { return _this.utils.mapRelativeNames(rslt, path_predicate, true); })
