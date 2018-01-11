@@ -2,11 +2,11 @@ import { FileTreeSeed } from './file-tree';
 import { FileTreeGeneratorConfig } from 'file-tree-api';
 import * as upath from 'upath';
 
-describe('File Tree - Directory Retrieval', () => {
+describe('File Tree Seed - Directory Retrieval', () => {
     it('Test Exception Handling', (done: any) => {
         let fs: SampleFileSystemWithErrors = new SampleFileSystemWithErrors();
-        let fileTree: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTree.getAllDirectories('').then((rslt: any) => {
+        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
+        fileTreeSeed.getAllDirectories('').then((rslt: any) => {
             done('Promise should not be resolved')
         }).catch((ex: any) => {
             done();
@@ -15,8 +15,8 @@ describe('File Tree - Directory Retrieval', () => {
 
     it('Test Valid Retrieval', (done: any) => {
         let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTree: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTree.getAllDirectories('').then((rslt: any) => {
+        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
+        fileTreeSeed.getAllDirectories('').then((rslt: any) => {
             expect(rslt).not.toBe(null);
             done();
         });
@@ -28,8 +28,8 @@ describe('File Tree - Directory Retrieval', () => {
             normalize: upath.normalize,
             windows: true
         }
-        let fileTree: FileTreeSeed = new FileTreeSeed(config, fs);
-        fileTree.getAllDirectories('').then((rslt: any) => {
+        let fileTreeSeed: FileTreeSeed = new FileTreeSeed(config, fs);
+        fileTreeSeed.getAllDirectories('').then((rslt: any) => {
             expect(rslt).not.toBe(null);
             expect(rslt[0]).toBe('/test/folder/path');
             done();
@@ -37,11 +37,11 @@ describe('File Tree - Directory Retrieval', () => {
     });
 });
 
-describe('File Tree - File Retrieval', () => {
+describe('File Tree Seed - File Retrieval', () => {
     it('Test Exception Handling', (done: any) => {
         let fs: SampleFileSystemWithErrors = new SampleFileSystemWithErrors();
-        let fileTree: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTree.getAllFiles('').then((rslt: any) => {
+        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
+        fileTreeSeed.getAllFiles('').then((rslt: any) => {
             done('Promise should not be resolved')
         }).catch((ex: any) => {
             done();
@@ -50,8 +50,8 @@ describe('File Tree - File Retrieval', () => {
 
     it('Test Valid Retrieval', (done: any) => {
         let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTree: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTree.getAllFiles('').then((rslt: any) => {
+        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
+        fileTreeSeed.getAllFiles('').then((rslt: any) => {
             expect(rslt).not.toBe(null);
             done();
         });
@@ -63,8 +63,8 @@ describe('File Tree - File Retrieval', () => {
             normalize: upath.normalize,
             windows: true
         }
-        let fileTree: FileTreeSeed = new FileTreeSeed(config, fs);
-        fileTree.getAllFiles('').then((rslt: any) => {
+        let fileTreeSeed: FileTreeSeed = new FileTreeSeed(config, fs);
+        fileTreeSeed.getAllFiles('').then((rslt: any) => {
             expect(rslt).not.toBe(null);
             expect(rslt[0]).toBe('/test/file/path/sample1.txt');
             done();
@@ -72,11 +72,11 @@ describe('File Tree - File Retrieval', () => {
     });
 });
 
-describe('File Tree - Get Tree Object', () => {
+describe('File Tree Seed - Get Tree Object', () => {
     it('Test Valid Retrieval', (done: any) => {
         let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTree: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTree.getFileTree('/test/file/or/folder/path/').then((rslt) => {
+        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
+        fileTreeSeed.getFileTree('/test/file/or/folder/path/').then((rslt) => {
             done();
         }).catch(() => {
             done('Exception should not be raised.');
@@ -85,8 +85,8 @@ describe('File Tree - Get Tree Object', () => {
 
     it('Test Valid Retrieval - Windows machine with default normalization', (done: any) => {
         let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTree: FileTreeSeed = new FileTreeSeed({ windows: true }, fs);
-        fileTree.getFileTree('/test/file/or/folder/path/').then((rslt) => {
+        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({ windows: true }, fs);
+        fileTreeSeed.getFileTree('/test/file/or/folder/path/').then((rslt) => {
             done();
         }).catch(() => {
             done('Exception should not be raised.');
@@ -96,8 +96,8 @@ describe('File Tree - Get Tree Object', () => {
     it('Test Valid Retrieval - Windows machine with custom normalization', (done: any) => {
         let fs: SampleFileSystem = new SampleFileSystem();
         let config: any = { windows: true, normalize: (path: string) => { return path; } }
-        let fileTree: FileTreeSeed = new FileTreeSeed(config, fs);
-        fileTree.getFileTree('/test/file/or/folder/path/').then((rslt) => {
+        let fileTreeSeed: FileTreeSeed = new FileTreeSeed(config, fs);
+        fileTreeSeed.getFileTree('/test/file/or/folder/path/').then((rslt) => {
             done();
         }).catch(() => {
             done('Exception should not be raised.');
@@ -106,8 +106,8 @@ describe('File Tree - Get Tree Object', () => {
 
     it('Test Invalid Folder Retrieval', (done: any) => {
         let fs: SampleFileSystemWithFolderErrors = new SampleFileSystemWithFolderErrors();
-        let fileTree: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTree.getFileTree('/test/file/or/folder/path/').then((rslt) => {
+        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
+        fileTreeSeed.getFileTree('/test/file/or/folder/path/').then((rslt) => {
             done('Exception should be raised.');
         }).catch(() => {
             done();
@@ -116,8 +116,8 @@ describe('File Tree - Get Tree Object', () => {
 
     it('Test Invalid File Retrieval', (done: any) => {
         let fs: SampleFileSystemWithFileErrors = new SampleFileSystemWithFileErrors();
-        let fileTree: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTree.getFileTree('/test/file/or/folder/path/').then((rslt) => {
+        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
+        fileTreeSeed.getFileTree('/test/file/or/folder/path/').then((rslt) => {
             done('Exception should be raised.');
         }).catch(() => {
             done();

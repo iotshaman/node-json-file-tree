@@ -3,6 +3,20 @@ import { DirectoryReaderApi } from 'directory-reader-api';
 import { FileTreeGeneratorConfig } from 'file-tree-api';
 import * as Promise from 'promise';
 
+export class FileTree {
+
+    files: Array<string>;
+    folders: Array<string>;
+    nodes: any;
+
+    constructor(files: Array<string>, folders: Array<string>, nodes: any) {
+        this.files = files;
+        this.folders = folders;
+        this.nodes = nodes;
+    }
+
+}
+
 export class FileTreeSeed {
 
     private utils: FileSystemUtils;
@@ -11,7 +25,7 @@ export class FileTreeSeed {
         this.utils = new FileSystemUtils(config.windows, config.normalize);
     }
 
-    getFileTree(start) {
+    getFileTree(start): Promise<FileTree> {
 
         let folders: any;
         let files: any;
@@ -40,7 +54,8 @@ export class FileTreeSeed {
 
         return Promise.all(promises).then(() => {
             var dir = this.utils.generateDirectory(folders);
-            return this.utils.buildFolderStructure(files, dir);
+            var obj = this.utils.buildFolderStructure(files, dir);
+            return new FileTree(files, folders, obj)
         });
 
     }

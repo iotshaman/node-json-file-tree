@@ -2,6 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var file_system_utils_1 = require("./file-system-utils");
 var Promise = require("promise");
+var FileTree = /** @class */ (function () {
+    function FileTree(files, folders, nodes) {
+        this.files = files;
+        this.folders = folders;
+        this.nodes = nodes;
+    }
+    return FileTree;
+}());
+exports.FileTree = FileTree;
 var FileTreeSeed = /** @class */ (function () {
     function FileTreeSeed(config, fs) {
         var _this = this;
@@ -46,7 +55,8 @@ var FileTreeSeed = /** @class */ (function () {
             .catch(function (err) { return Promise.reject(err); }));
         return Promise.all(promises).then(function () {
             var dir = _this.utils.generateDirectory(folders);
-            return _this.utils.buildFolderStructure(files, dir);
+            var obj = _this.utils.buildFolderStructure(files, dir);
+            return new FileTree(files, folders, obj);
         });
     };
     FileTreeSeed.prototype.getAllDirectories = function (start) {
