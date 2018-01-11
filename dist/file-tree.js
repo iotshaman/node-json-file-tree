@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var file_system_utils_1 = require("./file-system-utils");
 var Promise = require("promise");
-var FileTreeFactory = /** @class */ (function () {
-    function FileTreeFactory(config, fs) {
+var FileTreeSeed = /** @class */ (function () {
+    function FileTreeSeed(config, fs) {
         var _this = this;
         this.config = config;
         this.fs = fs;
@@ -21,7 +21,7 @@ var FileTreeFactory = /** @class */ (function () {
         };
         this.utils = new file_system_utils_1.FileSystemUtils(config.windows, config.normalize);
     }
-    FileTreeFactory.prototype.getFileTree = function (start) {
+    FileTreeSeed.prototype.getFileTree = function (start) {
         var _this = this;
         var folders;
         var files;
@@ -49,7 +49,7 @@ var FileTreeFactory = /** @class */ (function () {
             return _this.utils.buildFolderStructure(files, dir);
         });
     };
-    FileTreeFactory.prototype.getAllDirectories = function (start) {
+    FileTreeSeed.prototype.getAllDirectories = function (start) {
         var _this = this;
         return new Promise(function (res, error) {
             _this.fs.subdirs(start, function (err, subdirs) {
@@ -59,7 +59,7 @@ var FileTreeFactory = /** @class */ (function () {
             });
         });
     };
-    FileTreeFactory.prototype.getAllFiles = function (start) {
+    FileTreeSeed.prototype.getAllFiles = function (start) {
         var _this = this;
         return new Promise(function (res, error) {
             _this.fs.files(start, function (err, files) {
@@ -69,7 +69,7 @@ var FileTreeFactory = /** @class */ (function () {
             });
         });
     };
-    return FileTreeFactory;
+    return FileTreeSeed;
 }());
-exports.FileTreeFactory = FileTreeFactory;
+exports.FileTreeSeed = FileTreeSeed;
 //# sourceMappingURL=file-tree.js.map

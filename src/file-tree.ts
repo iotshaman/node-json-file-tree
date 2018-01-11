@@ -3,7 +3,7 @@ import { DirectoryReaderApi } from 'directory-reader-api';
 import { FileTreeGeneratorConfig } from 'file-tree-api';
 import * as Promise from 'promise';
 
-export class FileTreeFactory {
+export class FileTreeSeed {
 
     private utils: FileSystemUtils;
 

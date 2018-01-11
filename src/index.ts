@@ -1,1 +1,0 @@
-export { FileTreeFactory } from './file-tree';
