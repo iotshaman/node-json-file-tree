@@ -8,11 +8,16 @@ export class FileTree {
     nodes: any;
     private utils: FileSystemUtils;
 
-    constructor(files: Array<string>, folders: Array<string>, normalize: (path: string) => string = null) {
+    constructor(files: Array<string>, folders: Array<string>, 
+        nodes: any = null, normalize: (path: string) => string = null) {
         this.files = files;
         this.folders = folders;
         this.utils = new FileSystemUtils(normalize);
-        this.initializeNodes();
+        if (nodes != null) {
+            this.nodes = nodes;
+        } else {
+            this.initializeNodes();
+        }
     }
 	
 	private initializeNodes = () => {

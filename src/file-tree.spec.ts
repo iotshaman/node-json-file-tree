@@ -1,6 +1,14 @@
 import { FileTree } from './file-tree';
 
 describe('File Tree - Initialize Nodes', () => {
+    it('Test Initialize Nodes - node object provided', () => {
+        let tree = new FileTree(['/path/to/file.txt'], ['/path/to/'], {});
+        expect(tree).not.toBe(null);
+        expect(tree.files.length).toBe(1);
+        expect(tree.folders.length).toBe(1);
+        expect(tree.nodes).not.toBe(null);
+        expect(tree.nodes["path"]).toBe(undefined);
+    });
     it('Test Initialize Nodes - file in root directory', () => {
         let tree = new FileTree(['/path/to/file.txt'], ['/path/to/']);
         expect(tree).not.toBe(null);
