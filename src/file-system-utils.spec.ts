@@ -38,7 +38,7 @@ describe('File System Utils - Map Relative Names', () => {
         var arr = ['/test/file/or/folder/path/sample.txt'];
         var rslt = fs.mapRelativeNames(arr, '/test/file/or/folder/path/');
         expect(rslt).not.toBe(null);
-        expect(rslt[0]).toBe('path/sample.txt');
+        expect(rslt[0]).toBe('/sample.txt');
     })
 });
 

@@ -52,7 +52,7 @@ export class FileSystemUtils {
         var tmp = this.getFileParts(predicate).pop();
         return list.map((item) => {
             if (folder) item = this.addTrailingSlash(item);
-            return tmp + '/' + item.replace(predicate, '');
+            return `/${item.replace(predicate, '')}`;
         });
     }
 

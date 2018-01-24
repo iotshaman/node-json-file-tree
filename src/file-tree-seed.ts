@@ -12,7 +12,7 @@ export class FileTreeSeed {
         this.utils = new FileSystemUtils(config.normalize);
     }
 
-    getFileTree(start): Promise<FileTree> {
+    getFileTree(start: string): Promise<FileTree> {
 
         let folders: any;
         let files: any;
