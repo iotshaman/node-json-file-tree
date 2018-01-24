@@ -1,31 +1,43 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var FileSystemUtils = /** @class */ (function () {
-    function FileSystemUtils(windows, normalize) {
-        if (windows === void 0) { windows = false; }
+    function FileSystemUtils(normalize) {
         if (normalize === void 0) { normalize = null; }
-        this.windows = windows;
+        var _this = this;
         this.normalize = normalize;
+        this.defaultNormalization = function (path) {
+            if (path && path.length > 0 && path.charAt(1) == ':') {
+                path = _this.convertSingleWindowsPath(path);
+            }
+            path = path.replace(/\\/g, '/');
+            return path;
+        };
         if (this.normalize == null) {
             this.normalize = this.defaultNormalization;
         }
     }
-    FileSystemUtils.prototype.ensurePathFormat = function (path) {
+    FileSystemUtils.prototype.addTrailingSlash = function (path) {
         var chr = path.substring(path.length - 1);
         if (chr != '/') {
             path += '/';
         }
         return path;
     };
-    FileSystemUtils.prototype.normalizePaths = function (paths, normalize) {
+    FileSystemUtils.prototype.normalizePaths = function (paths) {
+        var _this = this;
         return paths.map(function (path) {
-            return normalize(path);
+            return _this.normalize(path);
         });
     };
     FileSystemUtils.prototype.convertWindowsPaths = function (paths) {
-        return paths.map(function (path) {
-            return path.substring(2);
-        });
+        return paths.map(this.convertSingleWindowsPath);
+    };
+    FileSystemUtils.prototype.convertSingleWindowsPath = function (path) {
+        return path.substring(2);
+    };
+    FileSystemUtils.prototype.getFileNameFromPath = function (path) {
+        var parts = this.getFileParts(path);
+        return parts[parts.length - 1];
     };
     //create directory structure
     FileSystemUtils.prototype.generateDirectory = function (array) {
@@ -49,7 +61,7 @@ var FileSystemUtils = /** @class */ (function () {
         var tmp = this.getFileParts(predicate).pop();
         return list.map(function (item) {
             if (folder)
-                item = _this.ensurePathFormat(item);
+                item = _this.addTrailingSlash(item);
             return tmp + '/' + item.replace(predicate, '');
         });
     };
@@ -58,18 +70,21 @@ var FileSystemUtils = /** @class */ (function () {
         return file.split('/').filter(function (val) { return val != ""; });
     };
     //generate tree view
-    FileSystemUtils.prototype.buildFolderStructure = function (list, dir) {
+    FileSystemUtils.prototype.generateNodeTree = function (list, dir) {
         for (var i = 0; i < list.length; i++) {
-            //remove first part of path (this is the current_dir)
             var parts = this.getFileParts(list[i]);
-            parts.shift();
+            //if first char is a slash then there is no current dir
+            if (list[i].charAt(0) != '/') {
+                //remove first part of path (this is the current_dir)
+                parts.shift();
+            }
             //call recursive algorthm to add path object to tree
-            this.create_path(parts.reduce(this.reduce_path, ''), dir);
+            this.createTreeNode(this.buildPath(parts), dir);
         }
         return dir;
     };
     //recursive algorithm to buld folder structures
-    FileSystemUtils.prototype.create_path = function (path, current_dir) {
+    FileSystemUtils.prototype.createTreeNode = function (path, current_dir) {
         var parts = this.getFileParts(path);
         if (parts.length == 1) {
             if (!current_dir['_files_']) {
@@ -80,17 +95,18 @@ var FileSystemUtils = /** @class */ (function () {
         else {
             var next = parts[0];
             parts.shift();
-            var new_path = parts.reduce(this.reduce_path, '');
-            this.create_path(new_path, current_dir[next]);
+            if (current_dir[next] == null) {
+                throw new Error("Directory not found: ..." + next);
+            }
+            this.createTreeNode(this.buildPath(parts), current_dir[next]);
         }
     };
-    //turns an array of folder parts into path
-    FileSystemUtils.prototype.reduce_path = function (a, b) { return a + '/' + b; };
-    ;
-    FileSystemUtils.prototype.defaultNormalization = function (path) {
-        console.warn('No path normalization method provided, this may cause issues on certain platforms.');
-        return path;
+    FileSystemUtils.prototype.buildPath = function (parts) {
+        return parts.reduce(this.reducePath, '');
     };
+    //turns an array of folder parts into path
+    FileSystemUtils.prototype.reducePath = function (a, b) { return a + '/' + b; };
+    ;
     return FileSystemUtils;
 }());
 exports.FileSystemUtils = FileSystemUtils;

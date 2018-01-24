@@ -1,205 +1,117 @@
-import { FileTreeSeed } from './file-tree';
-import { FileTreeGeneratorConfig } from 'file-tree-api';
-import * as upath from 'upath';
+import { FileTree } from './file-tree';
 
-describe('File Tree Seed - Directory Retrieval', () => {
-    it('Test Exception Handling', (done: any) => {
-        let fs: SampleFileSystemWithErrors = new SampleFileSystemWithErrors();
-        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTreeSeed.getAllDirectories('').then((rslt: any) => {
-            done('Promise should not be resolved')
-        }).catch((ex: any) => {
-            done();
-        });
+describe('File Tree - Initialize Nodes', () => {
+    it('Test Initialize Nodes - file in root directory', () => {
+        let tree = new FileTree(['/path/to/file.txt'], ['/path/to/']);
+        expect(tree).not.toBe(null);
+        expect(tree.files.length).toBe(1);
+        expect(tree.folders.length).toBe(1);
+        expect(tree.nodes["path"]).not.toBe(null);
     });
-
-    it('Test Valid Retrieval', (done: any) => {
-        let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTreeSeed.getAllDirectories('').then((rslt: any) => {
-            expect(rslt).not.toBe(null);
-            done();
-        });
+    it('Test Initialize Nodes - relative file paths', () => {
+        let tree = new FileTree(['path/to/file.txt'], ['path/to/']);
+        expect(tree).not.toBe(null);
+        expect(tree.files.length).toBe(1);
+        expect(tree.folders.length).toBe(1);
+        expect(tree.nodes["to"]).not.toBe(null);
     });
+});
 
-    it('Test Valid Retrieval On Windows Machine', (done: any) => {
-        let fs: SampleWindowsFileSystem = new SampleWindowsFileSystem();
-        let config: FileTreeGeneratorConfig = {
-            normalize: upath.normalize,
-            windows: true
+describe('File Tree - Add Files', () => {
+    it('Add New File', () => {
+        let tree = new FileTree(['/path/to/file.txt'], ['/path/to/']);
+        tree.addFiles(['/path/to/newfile.txt']);
+        expect(tree).not.toBe(null);
+        expect(tree.files.length).toBe(2);
+        expect(tree.folders.length).toBe(1);
+        expect(tree.nodes["path"]).not.toBe(null);
+        expect(tree.nodes["path"]["to"]).not.toBe(null);
+        var files = tree.nodes["path"]["to"]["_files_"];
+        expect(files.indexOf("file.txt")).not.toBe(-1);
+        expect(files.indexOf("newfile.txt")).not.toBe(-1);
+    });
+    it('Add Existing File', () => {
+        let tree = new FileTree(['/path/to/file.txt'], ['/path/to/']);
+        tree.addFiles(['/path/to/file.txt']);
+        expect(tree).not.toBe(null);
+        expect(tree.files.length).toBe(1);
+        expect(tree.folders.length).toBe(1);
+        expect(tree.nodes["path"]).not.toBe(null);
+    });
+});
+
+describe('File Tree - Get Directory from Path', () => {
+    it('Get Directory From File Path', () => {
+        var files = ['/path/to/file.txt', '/path/to/inner/file1.txt', '/path/to/inner/file2.txt'];
+        var folders = ['/path/to/', '/path/to/inner'];
+        let tree = new FileTree(files, folders);
+        var test = tree.getDirectoryFromPath('/path/to/inner/file1.txt', true);
+        expect(test).not.toBe(null);
+        expect(test["_files_"]).not.toBe(null);
+        expect(test["_files_"].length).toBe(2);
+    });
+    it('Get Directory From Folder Path - Trailing Slash', () => {
+        var files = ['/path/to/file.txt', '/path/to/inner/file1.txt', '/path/to/inner/file2.txt'];
+        var folders = ['/path/to/', '/path/to/inner'];
+        let tree = new FileTree(files, folders);
+        var test = tree.getDirectoryFromPath('/path/to/inner/');
+        expect(test).not.toBe(null);
+        expect(test["_files_"]).not.toBe(null);
+        expect(test["_files_"].length).toBe(2);
+    });
+    it('Get Directory From Folder Path - No Trailing Slash', () => {
+        var files = ['/path/to/file.txt', '/path/to/inner/file1.txt', '/path/to/inner/file2.txt'];
+        var folders = ['/path/to/', '/path/to/inner'];
+        let tree = new FileTree(files, folders);
+        var test = tree.getDirectoryFromPath('/path/to/inner');
+        expect(test).not.toBe(null);
+        expect(test["_files_"]).not.toBe(null);
+        expect(test["_files_"].length).toBe(2);
+    });
+});
+
+describe('File Tree - Delete Files', () => {
+    it('Delete File', () => {
+        var files = ['/path/to/file.txt', '/path/to/inner/file1.txt', '/path/to/inner/file2.txt'];
+        var folders = ['/path/to/', '/path/to/inner'];
+        let tree = new FileTree(files, folders);
+        tree.deleteFiles('/path/to/inner', ['/path/to/inner/file1.txt']);
+        var test = tree.getDirectoryFromPath('/path/to/inner');
+        expect(test).not.toBe(null);
+        expect(test["_files_"]).not.toBe(null);
+        expect(test["_files_"].length).toBe(1);
+    });
+    it('Delete File - File Not Found', () => {
+        var files = ['/path/to/file.txt', '/path/to/inner/file1.txt', '/path/to/inner/file2.txt'];
+        var folders = ['/path/to/', '/path/to/inner'];
+        let tree = new FileTree(files, folders);
+        tree.deleteFiles('/path/to/inner', ['/path/to/inner/file3.txt']);
+        var test = tree.getDirectoryFromPath('/path/to/inner');
+        expect(test).not.toBe(null);
+        expect(test["_files_"]).not.toBe(null);
+        expect(test["_files_"].length).toBe(2);
+    });
+});
+
+describe('File Tree - Delete Folders', () => {
+    it('Delete Folder', (done: any) => {
+        var files = ['/path/to/file.txt', '/path/to/inner/file1.txt', '/path/to/inner/file2.txt'];
+        var folders = ['/path/to/', '/path/to/inner'];
+        let tree = new FileTree(files, folders);
+        tree.deleteFolder('/path/to/inner');
+        try {
+            var test = tree.getDirectoryFromPath('/path/to/inner');
+        } catch (ex) {
+            //should throw error because path doesnt exist anymore
+            done();
         }
-        let fileTreeSeed: FileTreeSeed = new FileTreeSeed(config, fs);
-        fileTreeSeed.getAllDirectories('').then((rslt: any) => {
-            expect(rslt).not.toBe(null);
-            expect(rslt[0]).toBe('/test/folder/path');
-            done();
-        });
+    });
+    it('Delete Folder - Folder Not Found', () => {
+        var files = ['/path/to/file.txt', '/path/to/inner/file1.txt', '/path/to/inner/file2.txt'];
+        var folders = ['/path/to/', '/path/to/inner'];
+        let tree = new FileTree(files, folders);
+        tree.deleteFolder('/path/to/other');
+        var test = tree.getDirectoryFromPath('/path/to/inner');
+        expect(test).not.toBe(null);
     });
 });
-
-describe('File Tree Seed - File Retrieval', () => {
-    it('Test Exception Handling', (done: any) => {
-        let fs: SampleFileSystemWithErrors = new SampleFileSystemWithErrors();
-        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTreeSeed.getAllFiles('').then((rslt: any) => {
-            done('Promise should not be resolved')
-        }).catch((ex: any) => {
-            done();
-        });
-    });
-
-    it('Test Valid Retrieval', (done: any) => {
-        let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTreeSeed.getAllFiles('').then((rslt: any) => {
-            expect(rslt).not.toBe(null);
-            done();
-        });
-    });
-
-    it('Test Valid Retrieval On Windows Machine', (done: any) => {
-        let fs: SampleWindowsFileSystem = new SampleWindowsFileSystem();
-        let config: FileTreeGeneratorConfig = {
-            normalize: upath.normalize,
-            windows: true
-        }
-        let fileTreeSeed: FileTreeSeed = new FileTreeSeed(config, fs);
-        fileTreeSeed.getAllFiles('').then((rslt: any) => {
-            expect(rslt).not.toBe(null);
-            expect(rslt[0]).toBe('/test/file/path/sample1.txt');
-            done();
-        });
-    });
-});
-
-describe('File Tree Seed - Get Tree Object', () => {
-    it('Test Valid Retrieval', (done: any) => {
-        let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTreeSeed.getFileTree('/test/file/or/folder/path/').then((rslt) => {
-            done();
-        }).catch(() => {
-            done('Exception should not be raised.');
-        })
-    });
-
-    it('Test Valid Retrieval - Windows machine with default normalization', (done: any) => {
-        let fs: SampleFileSystem = new SampleFileSystem();
-        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({ windows: true }, fs);
-        fileTreeSeed.getFileTree('/test/file/or/folder/path/').then((rslt) => {
-            done();
-        }).catch(() => {
-            done('Exception should not be raised.');
-        })
-    });
-
-    it('Test Valid Retrieval - Windows machine with custom normalization', (done: any) => {
-        let fs: SampleFileSystem = new SampleFileSystem();
-        let config: any = { windows: true, normalize: (path: string) => { return path; } }
-        let fileTreeSeed: FileTreeSeed = new FileTreeSeed(config, fs);
-        fileTreeSeed.getFileTree('/test/file/or/folder/path/').then((rslt) => {
-            done();
-        }).catch(() => {
-            done('Exception should not be raised.');
-        })
-    });
-
-    it('Test Invalid Folder Retrieval', (done: any) => {
-        let fs: SampleFileSystemWithFolderErrors = new SampleFileSystemWithFolderErrors();
-        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTreeSeed.getFileTree('/test/file/or/folder/path/').then((rslt) => {
-            done('Exception should be raised.');
-        }).catch(() => {
-            done();
-        })
-    });
-
-    it('Test Invalid File Retrieval', (done: any) => {
-        let fs: SampleFileSystemWithFileErrors = new SampleFileSystemWithFileErrors();
-        let fileTreeSeed: FileTreeSeed = new FileTreeSeed({}, fs);
-        fileTreeSeed.getFileTree('/test/file/or/folder/path/').then((rslt) => {
-            done('Exception should be raised.');
-        }).catch(() => {
-            done();
-        })
-    });
-});
-
-class SampleFileSystem {
-
-    constructor() {}
-    
-    files = (start_path: string, callback: (err: any, files: Array<string>) => void) => {
-        callback(null, [
-            '/test/folder/path/sample1.txt', 
-            '/test/folder/path/sample2.txt', 
-            '/test/folder/path/extra/sample3.txt'
-        ]);
-    }
-
-    subdirs = (start_path: string, callback: (err: any, folders: Array<string>) => void) => {
-        callback(null, [
-            '/test/folder/path',
-            '/test/folder/path/extra'
-        ]);
-    }
-}
-
-class SampleWindowsFileSystem {
-
-    constructor() {}
-    
-    files = (start_path: string, callback: (err: any, files: Array<string>) => void) => {
-        callback(null, [
-            'C:\\test\\file\\path\\sample1.txt', 
-            'C:\\test\\file\\path\\sample2.txt', 
-            'C:\\test\\file\\path\\extra\\sample3.txt', 
-        ]);
-    }
-
-    subdirs = (start_path: string, callback: (err: any, folders: Array<string>) => void) => {
-        callback(null, [
-            'C:\\test\\folder\\path', 
-            'C:\\test\\folder\\path\\extra', 
-        ]);
-    }
-}
-
-class SampleFileSystemWithErrors {
-
-    constructor() {}
-    
-    files = (start_path: string, callback: (err: any, files: Array<string>) => void) => {
-        callback('Sample error', []);
-    }
-
-    subdirs = (start_path: string, callback: (err: any, folders: Array<string>) => void) => {
-        callback('Sample error', []);
-    }
-}
-
-class SampleFileSystemWithFolderErrors {
-
-    constructor() {}
-    
-    files = (start_path: string, callback: (err: any, files: Array<string>) => void) => {
-        callback(null, []);
-    }
-
-    subdirs = (start_path: string, callback: (err: any, folders: Array<string>) => void) => {
-        callback('Sample error', []);
-    }
-}
-
-class SampleFileSystemWithFileErrors {
-
-    constructor() {}
-    
-    files = (start_path: string, callback: (err: any, files: Array<string>) => void) => {
-        callback('Sample error', []);
-    }
-
-    subdirs = (start_path: string, callback: (err: any, folders: Array<string>) => void) => {
-        callback(null, []);
-    }
-}

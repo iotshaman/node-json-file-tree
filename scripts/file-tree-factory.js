@@ -1,5 +1,5 @@
 function createFileTreeSeed(windows) {
-    var FileTreeSeed = require('../dist/file-tree').FileTreeSeed;
+    var FileTreeSeed = require('../dist/file-tree-seed').FileTreeSeed;
     var config = {
         windows: !!windows,
         normalize: require('upath').normalize

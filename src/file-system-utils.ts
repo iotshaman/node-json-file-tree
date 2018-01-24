@@ -1,31 +1,38 @@
 export class FileSystemUtils {
 
-    constructor(private windows: boolean = false, private normalize: (path: string) => string = null) {
+    constructor(private normalize: (path: string) => string = null) {
         if (this.normalize == null) {
             this.normalize = this.defaultNormalization;
         }
     }
 
-    ensurePathFormat(path: string) {
+    addTrailingSlash(path: string) {
         var chr = path.substring(path.length - 1);
         if (chr != '/') { path += '/'; }
         return path;
     }
 
-    normalizePaths(paths: Array<string>, normalize: (path: string) => void) {
+    normalizePaths(paths: Array<string>) {
         return paths.map((path: string) => {
-            return normalize(path);
+            return this.normalize(path);
         });
     }
 
     convertWindowsPaths(paths: Array<string>) {
-        return paths.map((path: string) => {
-            return path.substring(2);
-        });
+        return paths.map(this.convertSingleWindowsPath);
+    }
+
+    convertSingleWindowsPath(path: string) {
+        return path.substring(2);
+    }
+
+    getFileNameFromPath(path: string) {
+        var parts = this.getFileParts(path);
+        return parts[parts.length - 1];
     }
 
     //create directory structure
-    generateDirectory(array) {
+    generateDirectory(array: Array<string>) {
         var dir = {}, current, tmp;
         for (var i = 0; i < array.length; i++) {
             current = dir;
@@ -41,10 +48,10 @@ export class FileSystemUtils {
     }
 
     //removes predicate string from each item in list
-    mapRelativeNames(list, predicate, folder: boolean = false) {
+    mapRelativeNames(list: Array<string>, predicate: string, folder: boolean = false) {
         var tmp = this.getFileParts(predicate).pop();
         return list.map((item) => {
-            if (folder) item = this.ensurePathFormat(item);
+            if (folder) item = this.addTrailingSlash(item);
             return tmp + '/' + item.replace(predicate, '');
         });
     }
@@ -55,19 +62,22 @@ export class FileSystemUtils {
     }
 
     //generate tree view
-    buildFolderStructure(list, dir) {
+    generateNodeTree(list: Array<string>, dir: any) {
         for (var i = 0; i < list.length; i++) {
-            //remove first part of path (this is the current_dir)
             var parts = this.getFileParts(list[i]);
-            parts.shift();
+            //if first char is a slash then there is no current dir
+            if (list[i].charAt(0) != '/') {
+                //remove first part of path (this is the current_dir)
+                parts.shift();
+            }
             //call recursive algorthm to add path object to tree
-            this.create_path(parts.reduce(this.reduce_path, ''), dir);
+            this.createTreeNode(this.buildPath(parts), dir);
         }
         return dir;
     }
 
     //recursive algorithm to buld folder structures
-    create_path(path, current_dir) {
+    createTreeNode(path: string, current_dir: any) {
         var parts = this.getFileParts(path);
         if (parts.length == 1) {
 			if (!current_dir['_files_']) { current_dir['_files_'] = []; }
@@ -75,16 +85,25 @@ export class FileSystemUtils {
         } else {
             var next = parts[0];
             parts.shift();
-            var new_path = parts.reduce(this.reduce_path, '');
-            this.create_path(new_path, current_dir[next]);
+            if (current_dir[next] == null) { 
+                throw new Error(`Directory not found: ...${next}`)
+            }
+            this.createTreeNode(this.buildPath(parts), current_dir[next]);
         }
     }
 
-    //turns an array of folder parts into path
-    reduce_path(a, b) {return a + '/' + b;};
+    buildPath(parts: Array<string>) {
+        return parts.reduce(this.reducePath, '');
+    }
 
-    defaultNormalization(path: string) {
-        console.warn('No path normalization method provided, this may cause issues on certain platforms.');
+    //turns an array of folder parts into path
+    reducePath(a, b) {return a + '/' + b;};
+
+    defaultNormalization = (path: string) => {        
+        if (path && path.length > 0 && path.charAt(1) == ':') { 
+            path = this.convertSingleWindowsPath(path);
+        }
+        path = path.replace(/\\/g, '/');
         return path;
     }
 }
