@@ -62,7 +62,7 @@ var FileSystemUtils = /** @class */ (function () {
         return list.map(function (item) {
             if (folder)
                 item = _this.addTrailingSlash(item);
-            return tmp + '/' + item.replace(predicate, '');
+            return "/" + item.replace(predicate, '');
         });
     };
     //returns an array representing a files path

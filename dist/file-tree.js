@@ -2,7 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var file_system_utils_1 = require("./file-system-utils");
 var FileTree = /** @class */ (function () {
-    function FileTree(files, folders, normalize) {
+    function FileTree(files, folders, nodes, normalize) {
+        if (nodes === void 0) { nodes = null; }
         if (normalize === void 0) { normalize = null; }
         var _this = this;
         this.initializeNodes = function () {
@@ -35,8 +36,6 @@ var FileTree = /** @class */ (function () {
             for (var i = 0; i < files.length; i++) {
                 var fname = _this.utils.getFileNameFromPath(files[i]);
                 var index = sys_files.indexOf(fname);
-                if (index == -1)
-                    continue;
                 sys_files.splice(index, 1);
             }
         };
@@ -73,6 +72,9 @@ var FileTree = /** @class */ (function () {
                 if (isFilePath) {
                     return prev;
                 }
+                else if (prev[parts[0]] == null) {
+                    throw new Error("Directory not found: ..." + parts[0]);
+                }
                 else {
                     return prev[parts[0]];
                 }
@@ -90,7 +92,12 @@ var FileTree = /** @class */ (function () {
         this.files = files;
         this.folders = folders;
         this.utils = new file_system_utils_1.FileSystemUtils(normalize);
-        this.initializeNodes();
+        if (nodes != null) {
+            this.nodes = nodes;
+        }
+        else {
+            this.initializeNodes();
+        }
     }
     return FileTree;
 }());
