@@ -123,3 +123,74 @@ describe('File Tree - Delete Folders', () => {
         expect(test).not.toBe(null);
     });
 });
+
+describe('File Tree - Add Folder', () => {
+    it('Add Folder', () => {
+        var files = ['/path/to/file.txt'];
+        var folders = ['/path/to/'];
+        let tree = new FileTree(files, folders);
+        tree.addFolder('/path/to/', 'NewFolder');
+        var test = tree.getDirectoryFromPath('/path/to/');
+        expect(test).not.toBe(null);
+        expect(test['NewFolder']).not.toBe(null);
+        expect(test['NewFolder']['_files_']).not.toBe(null);
+        expect(test['NewFolder']['_files_'].length).toBe(0);
+    });
+    it('Add Folder - Path Already Exists', (done: any) => {
+        var files = ['/path/to/file.txt'];
+        var folders = ['/path/to/'];
+        let tree = new FileTree(files, folders);
+        try {
+            tree.addFolder('/path/', 'to');
+        } catch(ex) {
+            done();
+        }
+    });
+});
+
+describe('File Tree - Rename Files', () => {
+    it('Rename File', () => {
+        var files = ['/path/to/file.txt'];
+        var folders = ['/path/to/'];
+        let tree = new FileTree(files, folders);
+        tree.renameFile('/path/to/', 'file.txt', 'file2.txt');
+        var test = tree.getDirectoryFromPath('/path/to/');
+        expect(test).not.toBe(null);
+        expect(test['_files_'].indexOf('file.txt')).toBe(-1);
+        expect(test['_files_'].indexOf('file2.txt')).not.toBe(-1);
+    });
+    it('Rename File - File Does Not Exist', (done: any) => {
+        var files = ['/path/to/file.txt'];
+        var folders = ['/path/to/'];
+        let tree = new FileTree(files, folders);
+        try {
+            tree.renameFile('/path/to/', 'file3.txt', 'file2.txt');
+        } catch(ex) {
+            done();
+        }
+    });
+});
+
+describe('File Tree - Rename Folder', () => {
+    it('Rename Folder', () => {
+        var files = ['/path/to/file.txt'];
+        var folders = ['/path/to/'];
+        let tree = new FileTree(files, folders);
+        tree.renameFolder('/path/', 'to', 'from');
+        var test = tree.getDirectoryFromPath('/path/');
+        expect(test).not.toBe(null);
+        expect(test['from']).not.toBe(null);
+        expect(test['from']['_files_']).not.toBe(null);
+        expect(test['from']['_files_'].length).toBe(1);
+    });
+    it('Rename Folder - Folder Does Not Exist', (done: any) => {
+        var files = ['/path/to/file.txt'];
+        var folders = ['/path/to/'];
+        let tree = new FileTree(files, folders);
+        try {
+            tree.renameFolder('/path/', 'from', 'to');
+        } catch(ex) {
+            done();
+        }
+    });
+});

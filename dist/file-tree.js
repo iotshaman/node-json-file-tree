@@ -20,6 +20,30 @@ var FileTree = /** @class */ (function () {
             _this.files = _this.files.concat(files);
             _this.nodes = _this.utils.generateNodeTree(files, _this.nodes);
         };
+        this.addFolder = function (path, folderName) {
+            var dir = _this.getDirectoryFromPath(path);
+            if (dir[folderName]) {
+                throw new Error('Folder already exists');
+            }
+            dir[folderName] = { '_files_': [] };
+        };
+        this.renameFile = function (path, oldName, newName) {
+            var dir = _this.getDirectoryFromPath(path);
+            var index = dir['_files_'].indexOf(oldName);
+            if (index == -1) {
+                throw new Error('File does not exist');
+            }
+            dir['_files_'][index] = newName;
+        };
+        this.renameFolder = function (path, oldName, newName) {
+            var dir = _this.getDirectoryFromPath(path);
+            if (!dir[oldName]) {
+                throw new Error('Folder does not exists');
+            }
+            var clone = _this.cloneNode(dir[oldName]);
+            delete dir[oldName];
+            dir[newName] = clone;
+        };
         this.deleteFiles = function (folder, files) {
             for (var i = files.length - 1; i >= 0; i--) {
                 var fi = _this.files.indexOf(files[i]);
@@ -88,6 +112,9 @@ var FileTree = /** @class */ (function () {
                 var next_path = _this.utils.buildPath(parts);
                 return _this.getDirectoryFromPath(next_path, isFilePath, prev[next_dir]);
             }
+        };
+        this.cloneNode = function (node) {
+            return JSON.parse(JSON.stringify(node));
         };
         this.files = files;
         this.folders = folders;
