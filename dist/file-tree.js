@@ -88,6 +88,9 @@ var FileTree = /** @class */ (function () {
         this.getDirectoryFromPath = function (path, isFilePath, prev) {
             if (isFilePath === void 0) { isFilePath = false; }
             if (prev === void 0) { prev = null; }
+            if (path == '/') {
+                return _this.nodes;
+            }
             if (prev == null) {
                 prev = _this.nodes;
             }

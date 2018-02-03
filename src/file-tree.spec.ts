@@ -76,6 +76,15 @@ describe('File Tree - Get Directory from Path', () => {
         expect(test["_files_"]).not.toBe(null);
         expect(test["_files_"].length).toBe(2);
     });
+    it('Get Directory From Folder Path - No Trailing Slash', () => {
+        var files = ['/file1.txt', '/path/to/file.txt'];
+        var folders = ['/path/to/'];
+        let tree = new FileTree(files, folders);
+        var test = tree.getDirectoryFromPath('/');
+        expect(test).not.toBe(null);
+        expect(test["_files_"]).not.toBe(null);
+        expect(test["_files_"].length).toBe(1);
+    });
 });
 
 describe('File Tree - Delete Files', () => {

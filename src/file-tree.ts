@@ -101,6 +101,7 @@ export class FileTree {
     }
 
     public getDirectoryFromPath = (path: string, isFilePath: boolean = false, prev: any = null) => {
+        if (path == '/') { return this.nodes; }
         if (prev == null) { prev = this.nodes; }
         var parts = this.utils.getFileParts(path);
         if (parts.length == 1) {
