@@ -203,3 +203,30 @@ describe('File Tree - Rename Folder', () => {
         }
     });
 });
+
+describe('File Tree - Copy Folder', () => {
+    it('Copy Folder', () => {
+        var files = ['/path/to/file.txt', '/path/to/inner/file1.txt', '/path/to/inner/file2.txt'];
+        var folders = ['/path/to/', '/path/to/inner'];
+        let tree = new FileTree(files, folders);
+        tree.copyFolder('/path/to/', '/path/', 'inner');
+        var test = tree.getDirectoryFromPath('/path/inner/');
+        expect(test).not.toBe(null);
+        expect(test['_files_']).not.toBe(null);
+        expect(test['_files_'].length).toBe(2);
+        var test2 = tree.getDirectoryFromPath('/path/to/inner/');
+        expect(test2).not.toBe(null);
+        expect(test2['_files_']).not.toBe(null);
+        expect(test2['_files_'].length).toBe(2);
+    });
+    it('Copy Folder - Folder Does Not Exist', (done: any) => {
+        try {
+            var files = ['/path/to/file.txt', '/path/to/inner/file1.txt', '/path/to/inner/file2.txt'];
+            var folders = ['/path/to/', '/path/to/inner'];
+            let tree = new FileTree(files, folders);
+            tree.copyFolder('/path/to/', '/path/', 'test');
+        } catch(ex) {
+            done();
+        }
+    });
+});

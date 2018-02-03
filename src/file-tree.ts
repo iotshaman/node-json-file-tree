@@ -3,12 +3,12 @@ import * as Promise from 'promise';
 
 export class FileTree {
 
-    files: Array<string>;
-    folders: Array<string>;
+    files: string[];
+    folders: string[];
     nodes: any;
     private utils: FileSystemUtils;
 
-    constructor(files: Array<string>, folders: Array<string>, 
+    constructor(files: string[], folders: string[], 
         nodes: any = null, normalize: (path: string) => string = null) {
         this.files = files;
         this.folders = folders;
@@ -25,7 +25,7 @@ export class FileTree {
         this.nodes = this.utils.generateNodeTree(this.files, dir);
     }
 
-    public addFiles = (files: Array<string>) => {
+    public addFiles = (files: string[]) => {
         for (var i = files.length - 1; i >= 0; i--) {
             if (this.files.indexOf(files[i]) != -1) {
                 //file already exists
@@ -61,7 +61,17 @@ export class FileTree {
         dir[newName] = clone;
     }
 
-    public deleteFiles = (folder: string, files: Array<string>) => {
+    public copyFolder = (fromPath: string, toPath: string, folderName: string) => {
+        var fromDir = this.getDirectoryFromPath(fromPath);
+        var toDir = this.getDirectoryFromPath(toPath);
+        if (!fromDir[folderName]) {
+            throw new Error('Folder does not exists');
+        }
+        var clone = this.cloneNode(fromDir[folderName]);
+        toDir[folderName] = clone;
+    }
+
+    public deleteFiles = (folder: string, files: string[]) => {
         for (var i = files.length - 1; i >= 0; i--) {
             var fi = this.files.indexOf(files[i]);
             if (fi == -1) {
@@ -72,7 +82,7 @@ export class FileTree {
             }
         }
         var dir = this.getDirectoryFromPath(folder);
-        var sys_files: Array<string> = dir['_files_'];
+        var sys_files: string[] = dir['_files_'];
         for (var i = 0; i < files.length; i++) {
             var fname = this.utils.getFileNameFromPath(files[i]);
             var index = sys_files.indexOf(fname);

@@ -44,6 +44,15 @@ var FileTree = /** @class */ (function () {
             delete dir[oldName];
             dir[newName] = clone;
         };
+        this.copyFolder = function (fromPath, toPath, folderName) {
+            var fromDir = _this.getDirectoryFromPath(fromPath);
+            var toDir = _this.getDirectoryFromPath(toPath);
+            if (!fromDir[folderName]) {
+                throw new Error('Folder does not exists');
+            }
+            var clone = _this.cloneNode(fromDir[folderName]);
+            toDir[folderName] = clone;
+        };
         this.deleteFiles = function (folder, files) {
             for (var i = files.length - 1; i >= 0; i--) {
                 var fi = _this.files.indexOf(files[i]);
