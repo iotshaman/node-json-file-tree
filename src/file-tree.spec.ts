@@ -123,6 +123,21 @@ describe('File Tree - Delete Folders', () => {
             done();
         }
     });
+    it('Delete Folder - Folder in Root', () => {
+        var files = ['/path1/file1.txt', '/path2/file2.txt'];
+        var folders = ['/path1/', '/path2/'];
+        let tree = new FileTree(files, folders);
+        var test = tree.getDirectoryFromPath('/');
+        expect(test["path2"]).not.toBeUndefined();
+        expect(test["path2"]).not.toBeNull();
+        tree.deleteFolder('/path2/');
+        test = tree.getDirectoryFromPath('/');
+        expect(test).not.toBeNull();
+        expect(test).not.toBeUndefined();
+        expect(test["path1"]).not.toBeUndefined();
+        expect(test["path1"]).not.toBeNull();
+        expect(test["path2"]).toBeUndefined();
+    });
     it('Delete Folder - Folder Not Found', () => {
         var files = ['/path/to/file.txt', '/path/to/inner/file1.txt', '/path/to/inner/file2.txt'];
         var folders = ['/path/to/', '/path/to/inner'];
@@ -144,6 +159,17 @@ describe('File Tree - Add Folder', () => {
         expect(test['NewFolder']).not.toBe(null);
         expect(test['NewFolder']['_files_']).not.toBe(null);
         expect(test['NewFolder']['_files_'].length).toBe(0);
+    });
+    it('Add Folder with Seed', () => {
+        var files = ['/path/to/file.txt'];
+        var folders = ['/path/to/'];
+        let tree = new FileTree(files, folders);
+        tree.addFolder('/path/to/', 'NewFolder', { '_files_': ['test1.txt'] });
+        var test = tree.getDirectoryFromPath('/path/to/');
+        expect(test).not.toBe(null);
+        expect(test['NewFolder']).not.toBe(null);
+        expect(test['NewFolder']['_files_']).not.toBe(null);
+        expect(test['NewFolder']['_files_'].length).toBe(1);
     });
     it('Add Folder - Path Already Exists', (done: any) => {
         var files = ['/path/to/file.txt'];
@@ -228,5 +254,17 @@ describe('File Tree - Copy Folder', () => {
         } catch(ex) {
             done();
         }
+    });
+});
+
+describe('File Tree - Clone Node By Path', () => {
+    it('Add Folder', () => {
+        var files = ['/path/file1.txt', '/path/file2.txt'];
+        var folders = ['/path/'];
+        let tree = new FileTree(files, folders);
+        var test = tree.cloneNodeByPath('/path/');
+        expect(test['_files_']).not.toBeNull();
+        expect(test['_files_']).not.toBeUndefined();
+        expect(test['_files_'].length).toBe(2);
     });
 });

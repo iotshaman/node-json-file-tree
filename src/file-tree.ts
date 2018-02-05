@@ -36,12 +36,16 @@ export class FileTree {
         this.nodes = this.utils.generateNodeTree(files, this.nodes);
     }
 
-    public addFolder = (path: string, folderName: string) => {
+    public addFolder = (path: string, folderName: string, seed: any = null) => {
         var dir = this.getDirectoryFromPath(path);
         if (dir[folderName]) {
             throw new Error('Folder already exists');
         }
-        dir[folderName] = { '_files_': [] };
+        if (!seed) {
+            dir[folderName] = { '_files_': [] };
+        } else {
+            dir[folderName] = seed;
+        }
     }
 
     public renameFile = (path: string, oldName: string, newName: string) => {
@@ -131,6 +135,11 @@ export class FileTree {
             var next_path = this.utils.buildPath(parts);
             return this.getDirectoryFromPath(next_path, isFilePath, prev[next_dir]);
         }
+    }
+
+    public cloneNodeByPath = (path: string) => {
+        var node = this.getDirectoryFromPath(path);
+        return this.cloneNode(node);
     }
 
     private cloneNode = (node: any) => {

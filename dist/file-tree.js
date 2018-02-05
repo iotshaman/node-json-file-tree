@@ -20,12 +20,18 @@ var FileTree = /** @class */ (function () {
             _this.files = _this.files.concat(files);
             _this.nodes = _this.utils.generateNodeTree(files, _this.nodes);
         };
-        this.addFolder = function (path, folderName) {
+        this.addFolder = function (path, folderName, seed) {
+            if (seed === void 0) { seed = null; }
             var dir = _this.getDirectoryFromPath(path);
             if (dir[folderName]) {
                 throw new Error('Folder already exists');
             }
-            dir[folderName] = { '_files_': [] };
+            if (!seed) {
+                dir[folderName] = { '_files_': [] };
+            }
+            else {
+                dir[folderName] = seed;
+            }
         };
         this.renameFile = function (path, oldName, newName) {
             var dir = _this.getDirectoryFromPath(path);
@@ -124,6 +130,10 @@ var FileTree = /** @class */ (function () {
                 var next_path = _this.utils.buildPath(parts);
                 return _this.getDirectoryFromPath(next_path, isFilePath, prev[next_dir]);
             }
+        };
+        this.cloneNodeByPath = function (path) {
+            var node = _this.getDirectoryFromPath(path);
+            return _this.cloneNode(node);
         };
         this.cloneNode = function (node) {
             return JSON.parse(JSON.stringify(node));
