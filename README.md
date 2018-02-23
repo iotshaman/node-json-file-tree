@@ -2,7 +2,7 @@
 
 ![npm badge](https://img.shields.io/npm/v/node-json-file-tree.svg) ![Build Status](https://travis-ci.org/iotshaman/node-json-file-tree.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/iotshaman/node-json-file-tree/badge.svg?branch=master)](https://coveralls.io/github/iotshaman/node-json-file-tree?branch=master)
 
-Tree structure that representing the contents of a given system drive. Simply pass in a start folder, or a list of files / folders, and this module will return an object that you can use in a user interface to represent your files!
+Tree structure representing the contents of a given system drive. Simply pass in a start folder, or a list of files / folders, and this module will return an object that you can use in a user interface to represent your files!
 
 ### Requirements
 
@@ -48,7 +48,7 @@ When you already have a list of files / folders, you can manually populate a new
 
 ```js
 let FileTree = require('node-json-file-tree').FileTree;
-let tree = new FileTree(['/path/to/file.txt', '/path/to/']);
+let tree = new FileTree(['/path/to/file.txt'], ['/path/to/']);
 // ...
 ```
 
