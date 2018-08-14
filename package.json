@@ -31,7 +31,9 @@
   },
   "dependencies": {
     "hoek": "^5.0.4",
+    "lodash": "^4.17.10",
     "node-dir": "^0.1.16",
+    "parsejson": "0.0.3",
     "promise": "8.0.1",
     "upath": "^1.0.2"
   }
